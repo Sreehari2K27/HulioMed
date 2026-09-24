@@ -6,3 +6,12 @@ gatherUsageStats = false
 headless = true
 # Port override via the PORT variable (defaults to 8501 for local runs).
 address = "0.0.0.0"
+
+# Professional medical-information theme (Streamlit-only, no logic impact).
+[theme]
+base = "light"
+primaryColor = "#0E7C7B"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F7F7"
+textColor = "#1B2A41"
+font = "sans serif"

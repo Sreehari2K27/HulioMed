@@ -133,14 +133,16 @@ def render_evidence(result: dict) -> None:
     """Sources + safety checks, shown under the answer in expanders."""
     sources = result.get("sources") or []
     if sources:
-        lines = [
-            f"- `{s['chunk_id']}` — {s['document']}, "
-            f"page(s) {', '.join(str(p) for p in s['pages'])} "
-            f"(distance {s['distance']:.3f})"
-            for s in sources
-        ]
+        lines = []
+        for s in sources:
+            pages = ", ".join(str(p) for p in s["pages"])
+            lines.append(
+                f"- **page(s) {pages}** — {s['document']}\n"
+                f"  <small>`{s['chunk_id']}` · distance {s['distance']:.3f}</small>"
+            )
         with st.expander(f"Sources ({len(sources)})", expanded=True):
-            st.markdown("\n".join(lines))
+            st.markdown("Answer grounded in these monograph passages.")
+            st.markdown("\n".join(lines), unsafe_allow_html=True)
 
     checks = result.get("checks") or {}
     blocks = []
@@ -168,11 +170,24 @@ if "messages" not in st.session_state:
 
 BASE_URL = render_sidebar()
 
-st.title(APP_TITLE)
+st.markdown(f"# {APP_TITLE}")
 st.caption(APP_SUBTITLE)
+st.markdown(
+    "<span style='background-color:#E0ECEB;color:#0E7C7B;border-radius:12px;"
+    "padding:2px 10px;font-size:0.8rem;font-weight:600;'>Educational "
+    "prototype — not medical advice</span>",
+    unsafe_allow_html=True,
+)
+st.info(
+    "**Grounded answers.** Every answer is sourced from the Hulio Product "
+    "Monograph with page citations. This assistant refuses diagnosis, "
+    "personal treatment advice, and out-of-scope topics. Nothing you type "
+    "is stored."
+)
 
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
+    avatar = "🩺" if message["role"] == "assistant" else None
+    with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
         if message["role"] == "assistant":
             render_evidence(message.get("result") or {})
@@ -180,7 +195,8 @@ for message in st.session_state.messages:
 
 def handle_question(question: str) -> None:
     st.session_state.messages.append({"role": "user", "content": question})
-    result = api_client.ask(question, BASE_URL)
+    with st.spinner("Searching the Hulio Product Monograph…"):
+        result = api_client.ask(question, BASE_URL)
     if result is None:
         content = (
             f":red[**Could not reach the HulioMed API** at `{BASE_URL}`.]\n\n"
@@ -215,9 +231,25 @@ if pending:
     handle_question(pending)
 
 if not st.session_state.messages:
-    st.info(
-        "Type a question in the box below, or click a suggested question in "
-        "the sidebar. Example:\n\n"
-        "- *What is the recommended dose of HULIO for plaque psoriasis?*\n"
-        "- *How should the HULIO prefilled pen be stored?*"
+    st.markdown(
+        "**Ask HulioMed anything about HULIO (adalimumab-fkjp)** — try one of "
+        "the examples below, or type your own question. Every answer is "
+        "grounded in the monograph and shown with its page citations."
     )
+    chips = st.columns(len(EXAMPLE_QUESTIONS))
+    for col, question in zip(chips, EXAMPLE_QUESTIONS):
+        with col:
+            label = " ".join(question.split()[:5]) + "…"
+            if st.button(
+                label,
+                key=f"example_{question[:18]}",
+                use_container_width=True,
+            ):
+                st.session_state.pending_question = question
+                st.rerun()
+
+st.markdown("---")
+st.caption(
+    "Educational prototype. Not medical advice. Always consult a healthcare "
+    "professional for personal medical questions."
+)
