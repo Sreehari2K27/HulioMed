@@ -20,7 +20,22 @@ import streamlit as st
 
 from app import api_client
 
-DEFAULT_API_URL = os.getenv("HULIOMED_API_URL", "http://127.0.0.1:8000")
+DEFAULT_LOCAL_API_URL = "http://127.0.0.1:8000"
+
+
+def _resolve_default_api_url() -> str:
+    """Backend address: environment variable, then Streamlit secrets, then local."""
+    url = os.getenv("HULIOMED_API_URL")
+    if url:
+        return url
+    try:
+        url = st.secrets.get("HULIOMED_API_URL") or None
+    except Exception:  # noqa: BLE001 - secrets may be unavailable at import
+        url = None
+    return url or DEFAULT_LOCAL_API_URL
+
+
+DEFAULT_API_URL = _resolve_default_api_url()
 APP_TITLE = "HulioMed"
 APP_SUBTITLE = (
     "Medical information assistant for **HULIO (adalimumab-fkjp)**, grounded "
@@ -160,8 +175,12 @@ def handle_question(question: str) -> None:
     if result is None:
         content = (
             f":red[**Could not reach the HulioMed API** at `{BASE_URL}`.]\n\n"
-            "Start the backend first, in a terminal from the project root:\n"
-            "```\nuvicorn app.main:app --reload\n```"
+            "- **Running locally?** Start the backend first, in a terminal from "
+            "the project root:\n"
+            "  ```\nuvicorn app.main:app --reload\n  ```\n"
+            "- **Running on the cloud?** Make sure the `HULIOMED_API_URL` "
+            "secret points at the deployed backend, e.g. "
+            "`https://hulio-med-api.onrender.com`.\n"
         )
         st.session_state.messages.append(
             {"role": "assistant", "content": content, "result": None}

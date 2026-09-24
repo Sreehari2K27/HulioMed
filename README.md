@@ -344,9 +344,12 @@ start it with the same two env vars. For a plain host with Python 3.12:
 1. On [share.streamlit.io](https://share.streamlit.io) (or
    `streamlit deploy` from the repo root) connect the same GitHub repo.
 2. Set **Main file path** to `app/chat_ui.py`.
-3. Add the environment variable `HULIOMED_API_URL = <your backend URL from (b)>`
-   in **Advanced settings → Secrets**. No `MISTRAL_API_KEY` is needed here —
-   only the backend talks to Mistral.
+3. In **App Settings → Secrets**, add the backend address (the app reads it
+   from here — never hardcoded in code):
+   ```toml
+   HULIOMED_API_URL = "https://hulio-med-api.onrender.com"
+   ```
+   No `MISTRAL_API_KEY` is needed here — only the backend talks to Mistral.
 4. Open the app's Streamlit URL. The sidebar health indicator should show
    "API ok — 48 monograph chunks loaded".
 
