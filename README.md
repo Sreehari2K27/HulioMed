@@ -225,7 +225,7 @@ LLM. All suites rerun in one command each.
   multi-source attribution.
 
 ## 16. Live demo
-- **Streamlit UI (live):** https://hulio-med.streamlit.app
+- **Streamlit UI (live):** https://huliomed.streamlit.app
 - **Backend API:** https://hulio-med-api.onrender.com — `GET /health` →
   `{"status":"ok","chunks":48}`; interactive docs at `/docs`.
 - Try in the demo: *"What is the recommended dose of HULIO for plaque
