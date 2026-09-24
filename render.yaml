@@ -1,0 +1,20 @@
+# Render blueprint for the HulioMed FastAPI backend (educational prototype).
+# Deploy: connect your GitHub repo in Render -> "New Blueprint" -> this file.
+# After creation, set the MISTRAL_API_KEY secret in the Render dashboard.
+
+services:
+  - type: web
+    name: hulio-med-api
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      # Set this in the Render dashboard as a secret - never in this file.
+      - key: MISTRAL_API_KEY
+        sync: false
+      # Comma-separated origins allowed to call the API. "*" = allow any
+      # (fine for this educational prototype; tighten for production).
+      - key: CORS_ORIGINS
+        value: "*"

@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Secrets — never commit API keys or local config
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Streamlit secrets (deployment secrets file - never commit)
+.streamlit/secrets.toml
+
+# Test / tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Data & chat artifacts
+# data/chroma_db/ - the local vector store is a build artifact. The source
+# data files in data/ (extracted JSON, chunks, embeddings, eval cases, PDF)
+# ARE committed on purpose so a fresh deployment can rebuild the vector store
+# without re-running extraction/embedding.
+data/chroma_db/

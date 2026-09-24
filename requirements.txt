@@ -1,0 +1,27 @@
+# HulioMed dependencies
+#
+# Runs on Python 3.12. All versions are pinned for reproducibility.
+# Layering: RAG pipeline -> backend API -> chat UI -> testing.
+#
+# pymupdf          # PDF text extraction (Phase 4)
+pymupdf==1.28.2
+#
+# mistralai        # embeddings + LLM via Mistral (Phases 6, 10)
+mistralai==2.10.1
+#
+# python-dotenv    # load API keys from .env (never committed)
+python-dotenv==1.0.1
+#
+# chromadb         # vector database (Phase 7)
+chromadb==1.5.9
+#
+# fastapi           # backend API (Phase 12)
+fastapi==0.141.1
+uvicorn==0.53.0
+httpx==0.28.1       # used by FastAPI's TestClient
+#
+# pytest            # API tests (Phase 12)
+pytest==9.1.1
+#
+# streamlit        # chat UI (Phase 13)
+streamlit==1.64.0

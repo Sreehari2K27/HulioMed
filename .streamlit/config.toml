@@ -1,0 +1,8 @@
+# Streamlit runtime defaults (used when deployed; local dev is unaffected).
+[browser]
+gatherUsageStats = false
+
+[server]
+headless = true
+# Port override via the PORT variable (defaults to 8501 for local runs).
+address = "0.0.0.0"
